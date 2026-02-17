@@ -36,11 +36,11 @@ describe('General Store', () => {
   it ('MainScreenRadioButtonMale', async () => {
     const MainScreenRadioButtonMale = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/radioMale")');
     const MainScreenRadioButtonFemale = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/radioFemale")');
-    const MainScreenRadioButtonFemale_IsChecked = await MainScreenRadioButtonFemale.getAttribute('checked');
-    const MainScreenRadioButtonMale_IsChecked = await MainScreenRadioButtonMale.getAttribute('checked');
     await MainScreenRadioButtonMale.waitForDisplayed({timeout:15000});
     await driver.pause(500)
     await MainScreenRadioButtonMale.click();
+    const MainScreenRadioButtonFemale_IsChecked = await MainScreenRadioButtonFemale.getAttribute('checked');
+    const MainScreenRadioButtonMale_IsChecked = await MainScreenRadioButtonMale.getAttribute('checked');
     await expect(MainScreenRadioButtonFemale_IsChecked).toEqual('false');
     await expect(MainScreenRadioButtonMale_IsChecked).toEqual('true');
   }
