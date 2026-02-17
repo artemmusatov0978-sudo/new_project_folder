@@ -24,10 +24,27 @@ describe('General Store', () => {
     await nameImageCheckMainScreen.waitForDisplayed({timeout:15000});
     await expect(nameImageCheckMainScreen).toBeDisplayed();
   })
-  it ('Menu_check_test', async () => {
-    const nameMainScreenDropDown = await $('android= new UiSelector().resourceId("android:id/text1")');
-    const countryUA = await $('android=new UiScrollable(new UiSelector().scrollable(true))' +'.scrollTextIntoView("Ukraine")');
-    await nameMainScreenDropDown.waitForDisplayed({timeout:15000});
+  it.only ('Menu_check_test', async () => {
+    const nameMainScreenDropDown = await $('android=new UiSelector().resourceId("android:id/text1")');
+    //const countryUA = await $('android=new UiScrollable(new UiSelector().scrollable(true)).flingForward().scrollIntoView(new UiSelector().text("Ukraine"))');
+    //const countryUA = await $('android=new UiScrollable(new UiSelector().scrollable(true))' +'.scrollTextIntoView("Ukraine")');
+    //const countryUA = await $('android=new UiScrollable(new UiSelector().scrollable(true).instance(0)).setMaxSearchSwipes(99).scrollIntoView(new UiSelector().text("Ukraine").instance(0))');
+    await nameMainScreenDropDown.waitForDisplayed({timeout: 15000}); 
+    await nameMainScreenDropDown.click();
+    let countryUA = null;
+  for (let i = 0; i < 30; i++) {
+    try {
+      countryUA = await $('android=new UiSelector().text("Ukraine")');
+      if (await countryUA.isDisplayed()) break;
+    } catch (e) {}
+    await driver.execute('mobile: swipeGesture', {
+      left: 0, top: 300, width: 1080, height: 1500,
+      direction: 'up',
+      percent: 1,
+      speed: 5000  
+    });
+  }
+    if (!countryUA) throw new Error('Ukraine не знайдено після скролу');
     await countryUA.waitForDisplayed({timeout:180000});
     await countryUA.click()
     await expect(nameMainScreenDropDown).toHaveText('Ukraine');
@@ -64,11 +81,10 @@ it ('MainScreenInputField', async () => {
     await expect(MainScreenInputField).toHaveText('Victor')
     })
 it ('MainScreenShopButton', async () => {
-    const MainScreenShopButton = await $('android= new UiSelector().resourceId("com.androidsample.generalstore:id/btnLetsShop")');
+    const MainScreenShopButton = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/btnLetsShop")');
     const ShopTitleText = await $('android= new UiSelector().resourceId("com.androidsample.generalstore:id/toolbar_title")');
     await MainScreenShopButton.waitForDisplayed({timeout:15000});
     await MainScreenShopButton.click()
     await expect(ShopTitleText).toHaveText('Products')
     })
-
 })
