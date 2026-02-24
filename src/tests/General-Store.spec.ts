@@ -2,14 +2,20 @@ import { expect } from '@wdio/globals';
 import { main } from 'appium';
 import { SchemaNameConflictError } from 'appium/build/lib/schema/schema';
 import { describe, it } from 'mocha';
+import splashPage from '../../pageobjects/splash.page';
+import mainPage from '../../pageobjects/main.page';
+import GM from '../../helpers/global.methods';
 
 describe('General Store', () => {
   it('Splash_scrin_test', async () => {
-
     const nameBucket = await $(
       'android=new UiSelector().resourceId("com.androidsample.generalstore:id/splashscreen")'
     );
     await nameBucket.waitForDisplayed({ timeout: 15000 });
+  })
+
+    it ('Splash_scrin_testV2', async () => {
+    await splashPage.waitForSplash
   })
 
   it('Title_text_test', async () => {
@@ -19,6 +25,7 @@ describe('General Store', () => {
     await nameTitle.waitForDisplayed({ timeout: 15000 });
     await expect(nameTitle).toHaveText('General Store')
   })
+
   it('Image_check_test', async () => {
     const nameImageCheckMainScreen = await $('android=new UiSelector().className("android.widget.ImageView")');
     await nameImageCheckMainScreen.waitForDisplayed({ timeout: 15000 });
@@ -79,6 +86,12 @@ describe('General Store', () => {
     await MainScreenInputField.waitForDisplayed({ timeout: 15000 });
     await MainScreenInputField.setValue('Victor');
     await expect(MainScreenInputField).toHaveText('Victor')
+  })
+  it.only('MainScreenInputFieldV2', async () => {
+    await mainPage.waitForPage
+    await mainPage.enterName('Victor')
+    await mainPage.checkName('Victor')
+  
   })
   it('MainScreenShopButton', async () => {
     const MainScreenShopButton = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/btnLetsShop")');

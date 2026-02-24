@@ -1,6 +1,5 @@
-import { waitForElement } from "../helpers/global.methods";
+import GM from "../helpers/global.methods";
 
- 
 const SELECTORS = {
     splashScreen: 'android=new UiSelector().resourceId("com.androidsample.generalstore:id/splashscreen")',
 } as const;
@@ -11,7 +10,7 @@ class SplashPage {
     }
  
     async waitForSplash(timeout: number = 15000): Promise<void> {
-        await waitForElement(SELECTORS.splashScreen, timeout);
+        await GM.waitForElement(SELECTORS.splashScreen, timeout);
     }
 }
  

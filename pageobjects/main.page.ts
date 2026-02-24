@@ -1,9 +1,19 @@
-import { isChecked, pause, scrollToText, waitForElement, waitForElementAndClick, waitForElementAndSetValue } from "../helpers/global.methods";
-
+import GM from "../helpers/global.methods";
 
 type Gender = 'male' | 'female';
 
 const APP_ID = 'com.androidsample.generalstore';
+
+const SELECTORS = {
+    toolbarTitle: `android=new UiSelector().resourceId("${APP_ID}:id/toolbar_title")`,
+    mainImage: 'android=new UiSelector().className("android.widget.ImageView")',
+    countryDropdown: 'android=new UiSelector().resourceId("android:id/text1")',
+    radioMale: `android=new UiSelector().resourceId("${APP_ID}:id/radioMale")`,
+    radioFemale: `android=new UiSelector().resourceId("${APP_ID}:id/radioFemale")`,
+    nameField: `android=new UiSelector().resourceId("${APP_ID}:id/nameField")`,
+    letsShopButton: `android=new UiSelector().resourceId("${APP_ID}:id/btnLetsShop")`
+
+} as const;
 
 class MainPage {
 
@@ -42,9 +52,9 @@ class MainPage {
     }
 
     async selectCountry(countryName: string): Promise<void> {
-        await waitForElement('android=new UiSelector().resourceId("android:id/text1")');
+        await GM.waitForElement(SELECTORS.countryDropdown);
         await (await this.countryDropdown).click();
-        const option = await scrollToText(countryName);
+        const option = await GM.scrollToText(countryName);
         await option.click();
     }
 
@@ -52,27 +62,33 @@ class MainPage {
         const el = gender === 'male' ? await this.radioMale : await this.radioFemale;
         await el.waitForDisplayed({ timeout: 15000 });
         await el.click();
-        await pause(500);
+        await GM.pause(500);
     }
 
     async isMaleChecked(): Promise<boolean> {
-        return isChecked(`android=new UiSelector().resourceId("${APP_ID}:id/radioMale")`);
+        return GM.isChecked(SELECTORS.radioMale);
     }
 
     async isFemaleChecked(): Promise<boolean> {
-        return isChecked(`android=new UiSelector().resourceId("${APP_ID}:id/radioFemale")`);
+        return GM.isChecked(SELECTORS.radioFemale);
     }
 
     async enterName(name: string): Promise<void> {
-        await waitForElementAndSetValue(
-            `android=new UiSelector().resourceId("${APP_ID}:id/nameField")`,
+        await GM.waitForElementAndSetValue(
+            SELECTORS.nameField,
             name
         );
     }
 
+ async checkName(name: string): Promise<void> {
+    const NameText = await GM.waitForElementAndGetText(SELECTORS.nameField,
+    );
+    await expect(NameText).toHaveText(name)
+    }
+
     async tapLetsShop(): Promise<void> {
-        await waitForElementAndClick(
-            `android=new UiSelector().resourceId("${APP_ID}:id/btnLetsShop")`
+        await GM.waitForElementAndClick(
+            SELECTORS.letsShopButton
         );
     }
 }
