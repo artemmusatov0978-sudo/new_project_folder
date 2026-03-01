@@ -5,6 +5,7 @@ import { describe, it } from 'mocha';
 import splashPage from '../../pageobjects/splash.page';
 import mainPage from '../../pageobjects/main.page';
 import GM from '../../helpers/global.methods';
+import { COUNTRY, TEST_NAME } from '../../data/test.data';
 
 describe('General Store', () => {
   it('Splash_scrin_test', async () => {
@@ -54,7 +55,7 @@ describe('General Store', () => {
     if (!countryUA) throw new Error('Ukraine не знайдено після скролу');
     await countryUA.waitForDisplayed({ timeout: 180000 });
     await countryUA.click()
-    await expect(nameMainScreenDropDown).toHaveText('Ukraine');
+    await expect(nameMainScreenDropDown).toHaveText(COUNTRY);
   }
   )
   it('MainScreenRadioButtonMale', async () => {
@@ -81,18 +82,19 @@ describe('General Store', () => {
     await expect(MainScreenRadioButtonMale_IsChecked).toEqual('false');
   }
   )
+  // it('MainScreenInputField', async () => {
+  //   const MainScreenInputField = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/nameField")')
+  //   await MainScreenInputField.waitForDisplayed({ timeout: 15000 });
+  //   await MainScreenInputField.setValue(TEST_NAME);
+  //   await expect(MainScreenInputField).toHaveText(T.testdata.name)
+  // })
+
   it('MainScreenInputField', async () => {
-    const MainScreenInputField = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/nameField")')
-    await MainScreenInputField.waitForDisplayed({ timeout: 15000 });
-    await MainScreenInputField.setValue('Victor');
-    await expect(MainScreenInputField).toHaveText('Victor')
-  })
-  it.only('MainScreenInputFieldV2', async () => {
     await mainPage.waitForPage
-    await mainPage.enterName('Victor')
-    await mainPage.checkName('Victor')
-  
+    await mainPage.enterName(TEST_NAME)
+    await mainPage.checkName(TEST_NAME)
   })
+
   it('MainScreenShopButton', async () => {
     const MainScreenShopButton = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/btnLetsShop")');
     const ShopTitleText = await $('android= new UiSelector().resourceId("com.androidsample.generalstore:id/toolbar_title")');
