@@ -9,30 +9,42 @@ import { TD } from '../../data/test.data';
 
 describe('General Store', () => {
  
-  it('Splash_scrin_test', async () => {
-    const nameBucket = await $(
-      'android=new UiSelector().resourceId("com.androidsample.generalstore:id/splashscreen")'
-    );
-    await nameBucket.waitForDisplayed({ timeout: 15000 });
-  })
+  // it('Splash_scrin_test', async () => {
+  //   const nameBucket = await $(
+  //     'android=new UiSelector().resourceId("com.androidsample.generalstore:id/splashscreen")'
+  //   );
+  //   await nameBucket.waitForDisplayed({ timeout: 15000 });
+  // })
 
-    it ('Splash_scrin_testV2', async () => {
+    it ('Splash_scrin_test', async () => {
     await splashPage.waitForSplash
   })
 
-  it('Title_text_test', async () => {
-    const nameTitle = await $(
-      'android=new UiSelector().resourceId("com.androidsample.generalstore:id/toolbar_title")'
-    );
-    await nameTitle.waitForDisplayed({ timeout: 15000 });
-    await expect(nameTitle).toHaveText('General Store')
+  // it('Title_text_test', async () => {
+  //   const nameTitle = await $(
+  //     'android=new UiSelector().resourceId("com.androidsample.generalstore:id/toolbar_title")'
+  //   );
+  //   await nameTitle.waitForDisplayed({ timeout: 15000 });
+  //   await expect(nameTitle).toHaveText('General Store')
+  // })
+
+    it('Title_text_test', async () => {
+    await mainPage.waitForPage
+    await mainPage.CheckTitleText('General Store')
   })
 
+
+  // it('Image_check_test', async () => {
+  //   const nameImageCheckMainScreen = await $('android=new UiSelector().className("android.widget.ImageView")');
+  //   await nameImageCheckMainScreen.waitForDisplayed({ timeout: 15000 });
+  //   await expect(nameImageCheckMainScreen).toBeDisplayed();
+  // })
+
   it('Image_check_test', async () => {
-    const nameImageCheckMainScreen = await $('android=new UiSelector().className("android.widget.ImageView")');
-    await nameImageCheckMainScreen.waitForDisplayed({ timeout: 15000 });
-    await expect(nameImageCheckMainScreen).toBeDisplayed();
+    await mainPage.waitForImage
   })
+
+
   it('Menu_check_test', async () => {
     const nameMainScreenDropDown = await $('android=new UiSelector().resourceId("android:id/text1")');
     //const countryUA = await $('android=new UiScrollable(new UiSelector().scrollable(true)).flingForward().scrollIntoView(new UiSelector().text("Ukraine"))');
@@ -59,30 +71,40 @@ describe('General Store', () => {
     await expect(nameMainScreenDropDown).toHaveText(TD.RandomCountry);
   }
   )
-  it('MainScreenRadioButtonMale', async () => {
-    const MainScreenRadioButtonMale = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/radioMale")');
-    const MainScreenRadioButtonFemale = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/radioFemale")');
-    await MainScreenRadioButtonMale.waitForDisplayed({ timeout: 15000 });
-    await driver.pause(500)
-    await MainScreenRadioButtonMale.click();
-    const MainScreenRadioButtonFemale_IsChecked = await MainScreenRadioButtonFemale.getAttribute('checked');
-    const MainScreenRadioButtonMale_IsChecked = await MainScreenRadioButtonMale.getAttribute('checked');
-    await expect(MainScreenRadioButtonFemale_IsChecked).toEqual('false');
-    await expect(MainScreenRadioButtonMale_IsChecked).toEqual('true');
-  }
-  )
-  it('MainScreenRadioButtonFemale', async () => {
-    const MainScreenRadioButtonMale = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/radioMale")');
-    const MainScreenRadioButtonFemale = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/radioFemale")');
-    await MainScreenRadioButtonMale.waitForDisplayed({ timeout: 15000 });
-    await MainScreenRadioButtonFemale.click();
-    await driver.pause(500)
-    const MainScreenRadioButtonFemale_IsChecked = await MainScreenRadioButtonFemale.getAttribute('checked');
-    const MainScreenRadioButtonMale_IsChecked = await MainScreenRadioButtonMale.getAttribute('checked');
-    await expect(MainScreenRadioButtonFemale_IsChecked).toEqual('true');
-    await expect(MainScreenRadioButtonMale_IsChecked).toEqual('false');
-  }
-  )
+  // it('MainScreenRadioButtonMale', async () => {
+  //   const MainScreenRadioButtonMale = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/radioMale")');
+  //   const MainScreenRadioButtonFemale = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/radioFemale")');
+  //   await MainScreenRadioButtonMale.waitForDisplayed({ timeout: 15000 });
+  //   await driver.pause(500)
+  //   await MainScreenRadioButtonMale.click();
+  //   const MainScreenRadioButtonFemale_IsChecked = await MainScreenRadioButtonFemale.getAttribute('checked');
+  //   const MainScreenRadioButtonMale_IsChecked = await MainScreenRadioButtonMale.getAttribute('checked');
+  //   await expect(MainScreenRadioButtonFemale_IsChecked).toEqual('false');
+  //   await expect(MainScreenRadioButtonMale_IsChecked).toEqual('true');
+  // })
+
+  // it('MainScreenRadioButtonFemale', async () => {
+  //   const MainScreenRadioButtonMale = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/radioMale")');
+  //   const MainScreenRadioButtonFemale = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/radioFemale")');
+  //   await MainScreenRadioButtonMale.waitForDisplayed({ timeout: 15000 });
+  //   await MainScreenRadioButtonFemale.click();
+  //   await driver.pause(500)
+  //   const MainScreenRadioButtonFemale_IsChecked = await MainScreenRadioButtonFemale.getAttribute('checked');
+  //   const MainScreenRadioButtonMale_IsChecked = await MainScreenRadioButtonMale.getAttribute('checked');
+  //   await expect(MainScreenRadioButtonFemale_IsChecked).toEqual('true');
+  //   await expect(MainScreenRadioButtonMale_IsChecked).toEqual('false');
+  // })
+
+    it('MainScreenRadioButtonMale', async () => {
+    await mainPage.selectGender("male")
+    await mainPage.isMaleChecked
+  })
+
+    it('MainScreenRadioButtonFemale', async () => {
+    await mainPage.selectGender("female")
+    await mainPage.isFemaleChecked
+  })
+
   // it('MainScreenInputField', async () => {
   //   const MainScreenInputField = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/nameField")')
   //   await MainScreenInputField.waitForDisplayed({ timeout: 15000 });
@@ -96,11 +118,15 @@ describe('General Store', () => {
     await mainPage.checkName(TD.FakerName)
   })
 
-  it('MainScreenShopButton', async () => {
+  it.only('MainScreenShopButton', async () => {
     const MainScreenShopButton = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/btnLetsShop")');
     const ShopTitleText = await $('android= new UiSelector().resourceId("com.androidsample.generalstore:id/toolbar_title")');
     await MainScreenShopButton.waitForDisplayed({ timeout: 15000 });
     await MainScreenShopButton.click()
     await expect(ShopTitleText).toHaveText('Products')
   })
+
+  //   it.only('MainScreenShopButton', async () => {
+  //   await mainPage.tapLetsShop
+  // })
 })

@@ -38,7 +38,7 @@ class MainPage {
         return $(this.toolbarTitleSelector);
     }
 
-        mainImage(): Promise<WebdriverIO.Element> {
+    get    mainImage(): Promise<WebdriverIO.Element> {
         return $(this.mainImageSelector);
     }
     get countryDropdown(): Promise<WebdriverIO.Element> {
@@ -50,15 +50,25 @@ class MainPage {
     get radioFemale(): Promise<WebdriverIO.Element> {
         return $(this.radioFemaleSelector);
     }
-        nameField(): Promise<WebdriverIO.Element> {
+    get   nameField(): Promise<WebdriverIO.Element> {
         return $(this.nameFieldSelector);
     }
-        letsShopButton(): Promise<WebdriverIO.Element> {
+    get    letsShopButton(): Promise<WebdriverIO.Element> {
         return $(this.letsShopButtonSelector);
     }
 
     async waitForPage(timeout: number = 15000): Promise<void> {
         await (await this.toolbarTitle).waitForDisplayed({ timeout });
+    }
+    
+    async CheckTitleText(name: string): Promise<void> {
+    const TitleText = await GM.waitForElementAndGetText(SELECTORS.toolbarTitle,
+    );
+    await expect(TitleText).toHaveText(name)
+    }
+
+    async waitForImage(timeout: number = 15000): Promise<void> {
+    await (await this.mainImage).waitForDisplayed({ timeout });
     }
 
     async selectCountry(countryName: string): Promise<void> {
@@ -98,9 +108,9 @@ class MainPage {
     }
 
     async tapLetsShop(): Promise<void> {
-        await GM.waitForElementAndClick(
-            SELECTORS.letsShopButton
-        );
+   await GM.waitForElement(SELECTORS.letsShopButton,);
+   const el = await this.letsShopButton 
+   await el.click();
     }
 }
 
