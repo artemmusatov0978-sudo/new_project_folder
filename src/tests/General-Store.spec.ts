@@ -30,7 +30,7 @@ describe('General Store', () => {
 
     it('Title_text_test', async () => {
     await mainPage.waitForPage
-    await mainPage.CheckTitleText('General Store')
+    await mainPage.CheckTitleText(TD.TitleGeneralStore)
   })
 
 
@@ -123,7 +123,7 @@ describe('General Store', () => {
     const ShopTitleText = await $('android= new UiSelector().resourceId("com.androidsample.generalstore:id/toolbar_title")');
     await MainScreenShopButton.waitForDisplayed({ timeout: 15000 });
     await MainScreenShopButton.click()
-    await expect(ShopTitleText).toHaveText('Products')
+    await expect(ShopTitleText).toHaveText(TD.TitleProduct)
   })
 
   //   it.only('MainScreenShopButton', async () => {
