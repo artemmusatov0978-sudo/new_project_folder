@@ -1,0 +1,4 @@
+/logs/
+/node_modules/
+/logs/wdio-appium.log
+/node_modules/.package-lock.json

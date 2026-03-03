@@ -5,9 +5,10 @@ import { describe, it } from 'mocha';
 import splashPage from '../../pageobjects/splash.page';
 import mainPage from '../../pageobjects/main.page';
 import GM from '../../helpers/global.methods';
-import { COUNTRY, TEST_NAME } from '../../data/test.data';
+import { TD } from '../../data/test.data';
 
 describe('General Store', () => {
+ 
   it('Splash_scrin_test', async () => {
     const nameBucket = await $(
       'android=new UiSelector().resourceId("com.androidsample.generalstore:id/splashscreen")'
@@ -42,7 +43,7 @@ describe('General Store', () => {
     let countryUA = null;
     for (let i = 0; i < 30; i++) {
       try {
-        countryUA = await $('android=new UiSelector().text("Ukraine")');
+        countryUA = await $(`android=new UiSelector().text("${TD.RandomCountry}")`);
         if (await countryUA.isDisplayed()) break;
       } catch (e) { }
       await driver.execute('mobile: swipeGesture', {
@@ -55,7 +56,7 @@ describe('General Store', () => {
     if (!countryUA) throw new Error('Ukraine не знайдено після скролу');
     await countryUA.waitForDisplayed({ timeout: 180000 });
     await countryUA.click()
-    await expect(nameMainScreenDropDown).toHaveText(COUNTRY);
+    await expect(nameMainScreenDropDown).toHaveText(TD.RandomCountry);
   }
   )
   it('MainScreenRadioButtonMale', async () => {
@@ -86,13 +87,13 @@ describe('General Store', () => {
   //   const MainScreenInputField = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/nameField")')
   //   await MainScreenInputField.waitForDisplayed({ timeout: 15000 });
   //   await MainScreenInputField.setValue(TEST_NAME);
-  //   await expect(MainScreenInputField).toHaveText(T.testdata.name)
+  //   await expect(MainScreenInputField).toHaveText(TEST_NAME)
   // })
 
-  it('MainScreenInputField', async () => {
+  it.only('MainScreenInputField', async () => {
     await mainPage.waitForPage
-    await mainPage.enterName(TEST_NAME)
-    await mainPage.checkName(TEST_NAME)
+    await mainPage.enterName(TD.FakerName)
+    await mainPage.checkName(TD.FakerName)
   })
 
   it('MainScreenShopButton', async () => {

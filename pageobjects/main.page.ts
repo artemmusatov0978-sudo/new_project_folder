@@ -16,36 +16,46 @@ const SELECTORS = {
 } as const;
 
 class MainPage {
+    private toolbarTitleSelector: string;
+    private mainImageSelector: string;
+    private countryDropdownSelector: string;
+    private radioMaleSelector: string;
+    private radioFemaleSelector: string;
+    private nameFieldSelector: string;
+    private letsShopButtonSelector: string;
+
+      constructor() {
+        this.toolbarTitleSelector = SELECTORS.toolbarTitle;
+        this.mainImageSelector = SELECTORS.mainImage;
+        this.countryDropdownSelector = SELECTORS.countryDropdown;
+        this.radioMaleSelector = SELECTORS.radioMale;
+        this.radioFemaleSelector = SELECTORS.radioFemale;
+        this.nameFieldSelector = SELECTORS.nameField;
+        this.letsShopButtonSelector = SELECTORS.letsShopButton;
+    }
 
     get toolbarTitle(): Promise<WebdriverIO.Element> {
-        return $(`android=new UiSelector().resourceId("${APP_ID}:id/toolbar_title")`);
+        return $(this.toolbarTitleSelector);
     }
 
-    get mainImage(): Promise<WebdriverIO.Element> {
-        return $('android=new UiSelector().className("android.widget.ImageView")');
+        mainImage(): Promise<WebdriverIO.Element> {
+        return $(this.mainImageSelector);
     }
-
     get countryDropdown(): Promise<WebdriverIO.Element> {
-        return $('android=new UiSelector().resourceId("android:id/text1")');
+        return $(this.countryDropdownSelector);
     }
-
     get radioMale(): Promise<WebdriverIO.Element> {
-        return $(`android=new UiSelector().resourceId("${APP_ID}:id/radioMale")`);
+        return $(this.radioMaleSelector);
     }
-
     get radioFemale(): Promise<WebdriverIO.Element> {
-        return $(`android=new UiSelector().resourceId("${APP_ID}:id/radioFemale")`);
+        return $(this.radioFemaleSelector);
     }
-
-    get nameField(): Promise<WebdriverIO.Element> {
-        return $(`android=new UiSelector().resourceId("${APP_ID}:id/nameField")`);
+        nameField(): Promise<WebdriverIO.Element> {
+        return $(this.nameFieldSelector);
     }
-
-    get letsShopButton(): Promise<WebdriverIO.Element> {
-        return $(`android=new UiSelector().resourceId("${APP_ID}:id/btnLetsShop")`);
+        letsShopButton(): Promise<WebdriverIO.Element> {
+        return $(this.letsShopButtonSelector);
     }
-
-
 
     async waitForPage(timeout: number = 15000): Promise<void> {
         await (await this.toolbarTitle).waitForDisplayed({ timeout });
@@ -78,6 +88,7 @@ class MainPage {
             SELECTORS.nameField,
             name
         );
+        console.log(name)
     }
 
  async checkName(name: string): Promise<void> {
