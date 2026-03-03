@@ -2,3 +2,7 @@
 /node_modules/
 /logs/wdio-appium.log
 /node_modules/.package-lock.json
+node_modules/.cache/appium/package.hash
+node_modules/.package-lock.json
+logs/wdio-appium.log
+package-lock.json
