@@ -36,9 +36,9 @@ class MainPage {
 
     get toolbarTitle(): Promise<WebdriverIO.Element> {
         return $(this.toolbarTitleSelector);
-    }
+}
 
-    get    mainImage(): Promise<WebdriverIO.Element> {
+    get mainImage(): Promise<WebdriverIO.Element> {
         return $(this.mainImageSelector);
     }
     get countryDropdown(): Promise<WebdriverIO.Element> {

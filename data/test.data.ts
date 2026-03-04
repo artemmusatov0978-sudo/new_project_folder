@@ -4,7 +4,7 @@ import Random, { } from "../helpers/random.function";
 export const TD = {
 TEST_NAME: 'Victor',
 COUNTRY: 'Ukraine',
-TitleProduct: 'Product',
+TitleProduct: 'Products',
 TitleGeneralStore: 'General Store',
 RandomName: RM.generateRandomName,
 ConstantRandomName: RM.generateHumanName(),

@@ -28,7 +28,7 @@ describe('General Store', () => {
   //   await expect(nameTitle).toHaveText('General Store')
   // })
 
-    it('Title_text_test', async () => {
+    it.only('Title_text_test', async () => {
     await mainPage.waitForPage
     await mainPage.CheckTitleText(TD.TitleGeneralStore)
   })
@@ -112,13 +112,13 @@ describe('General Store', () => {
   //   await expect(MainScreenInputField).toHaveText(TEST_NAME)
   // })
 
-  it.only('MainScreenInputField', async () => {
+  it('MainScreenInputField', async () => {
     await mainPage.waitForPage
     await mainPage.enterName(TD.FakerName)
     await mainPage.checkName(TD.FakerName)
   })
 
-  it.only('MainScreenShopButton', async () => {
+  it('MainScreenShopButton', async () => {
     const MainScreenShopButton = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/btnLetsShop")');
     const ShopTitleText = await $('android= new UiSelector().resourceId("com.androidsample.generalstore:id/toolbar_title")');
     await MainScreenShopButton.waitForDisplayed({ timeout: 15000 });

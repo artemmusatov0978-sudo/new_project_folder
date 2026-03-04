@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebdriverIO Reporter Setup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0369a1;
+            --primary-glow: rgba(14, 165, 233, 0.35);
+            --accent: #f97316;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface2: #263044;
+            --border: #334155;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --radius: 14px;
+            --font: 'Space Grotesk', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+            padding: 40px 20px 60px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -200px;
+            left: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14,165,233,0.12) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -200px;
+            right: -200px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(249,115,22,0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.7s ease both;
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 10px 22px;
+            margin-bottom: 22px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .logo-badge .dot {
+            width: 8px; height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        h1 span { color: var(--primary); }
+
+        .subtitle {
+            font-size: 17px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* LANGUAGE TOGGLE */
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 4px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .lang-btn {
+            padding: 7px 14px;
+            border: none;
+            background: transparent;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+            transition: all 0.2s;
+            color: var(--text-muted);
+            font-family: var(--font);
+            letter-spacing: 0.03em;
+        }
+
+        .lang-btn:hover { color: var(--text); background: var(--surface2); }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* WIZARD CARD */
+        .wizard-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+            animation: fadeInUp 0.7s ease both;
+            animation-delay: 0.1s;
+        }
+
+        /* PROGRESS */
+        .progress-bar {
+            display: flex;
+            background: var(--bg);
+            padding: 24px 30px;
+            border-bottom: 1px solid var(--border);
+            gap: 0;
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            padding: 8px 4px;
+        }
+
+        .progress-step::after {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: calc(50% + 25px);
+            right: calc(-50% + 25px);
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+            transition: background 0.4s;
+        }
+
+        .progress-step:last-child::after { display: none; }
+        .progress-step.completed::after { background: var(--primary); }
+
+        .step-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            margin: 0 auto 10px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .progress-step.active .step-circle {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 0 6px var(--primary-glow);
+        }
+
+        .progress-step.completed .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .progress-step.completed .step-circle::after {
+            content: '✓';
+            font-size: 18px;
+        }
+
+        .progress-step.completed .step-circle-num { display: none; }
+
+        .step-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .progress-step.active .step-label { color: var(--primary); }
+        .progress-step.completed .step-label { color: var(--success); }
+
+        /* STEP CONTENT */
+        .step-content {
+            padding: 48px 50px;
+            min-height: 480px;
+        }
+
+        .step { display: none; animation: fadeIn 0.4s ease; }
+        .step.active { display: block; }
+
+        .step-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        .step-description {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 36px;
+        }
+
+        /* FORM */
+        .form-group { margin-bottom: 26px; }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 9px;
+            font-size: 14px;
+            letter-spacing: 0.02em;
+        }
+
+        input[type="text"],
+        input[type="color"],
+        select {
+            width: 100%;
+            padding: 13px 18px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            color: var(--text);
+            transition: all 0.2s;
+            font-family: var(--font);
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        select option { background: var(--surface); }
+
+        .color-input-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        input[type="color"] {
+            width: 72px;
+            height: 52px;
+            padding: 4px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .color-preview {
+            flex: 1;
+            padding: 13px 18px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            font-weight: 700;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: 14px;
+            transition: all 0.3s;
+            background: var(--bg);
+        }
+
+        /* THEME CARDS */
+        .theme-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        .theme-card {
+            padding: 20px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.25s;
+            text-align: center;
+            background: var(--bg);
+        }
+
+        .theme-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(14,165,233,0.15);
+        }
+
+        .theme-card.selected {
+            border-color: var(--primary);
+            background: rgba(14, 165, 233, 0.08);
+        }
+
+        .theme-icon { font-size: 36px; margin-bottom: 8px; }
+        .theme-name { font-weight: 700; color: var(--text); font-size: 14px; }
+
+        /* CHECKBOXES */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 13px 16px;
+            background: var(--bg);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1.5px solid var(--border);
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--primary);
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* PREVIEW */
+        .preview-section {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-top: 28px;
+        }
+
+        .preview-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .config-preview {
+            background: #0a0f1a;
+            border: 1px solid #1e2d40;
+            color: #a8c4d8;
+            padding: 22px;
+            border-radius: 10px;
+            font-family: var(--mono);
+            font-size: 12.5px;
+            line-height: 2;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .config-key { color: #7dd3fc; }
+        .config-string { color: #fbbf24; }
+        .config-comment { color: #475569; font-style: italic; }
+
+        /* BUTTONS */
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 44px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
+        }
+
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font);
+            letter-spacing: 0.01em;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--primary-glow);
+        }
+
+        .btn-secondary {
+            background: var(--surface2);
+            color: var(--text);
+            border: 1.5px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        /* FINAL STEP */
+        .final-step { text-align: center; }
+
+        .success-icon {
+            font-size: 90px;
+            margin-bottom: 24px;
+            animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: block;
+        }
+
+        .download-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin: 32px 0;
+        }
+
+        .download-card {
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 18px;
+            text-align: center;
+            transition: all 0.25s;
+            cursor: pointer;
+        }
+
+        .download-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(14,165,233,0.15);
+        }
+
+        .download-icon { font-size: 36px; margin-bottom: 10px; }
+        .download-title { font-weight: 700; color: var(--text); margin-bottom: 6px; font-size: 14px; font-family: var(--mono); }
+        .download-desc { color: var(--text-muted); font-size: 12px; }
+
+        /* NOTIFICATION */
+        .copy-notification {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--success);
+            color: white;
+            padding: 14px 22px;
+            border-radius: var(--radius);
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 9999;
+        }
+
+        .copy-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* LOGO UPLOAD */
+        .logo-upload-area {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        #logoPreviewContainer {
+            margin-top: 14px;
+            display: none;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+            text-align: center;
+        }
+
+        #logoImage { max-width: 180px; max-height: 80px; border-radius: 6px; }
+        #logoName { margin-top: 8px; font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
+
+        /* WDIO BADGE */
+        .wdio-tag {
+            display: inline-block;
+            background: rgba(249,115,22,0.15);
+            color: var(--accent);
+            border: 1px solid rgba(249,115,22,0.3);
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        @media (max-width: 600px) {
+            .step-content { padding: 30px 20px; }
+            .progress-bar { padding: 16px; }
+            .step-label { display: none; }
+            .theme-selector { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="language-selector">
+    <button class="lang-btn active" onclick="setLanguage('uk')" data-lang="uk">🇺🇦 UA</button>
+    <button class="lang-btn" onclick="setLanguage('en')" data-lang="en">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="setLanguage('pl')" data-lang="pl">🇵🇱 PL</button>
+</div>
+
+<div class="container">
+    <div class="header">
+        <div class="logo-badge">
+            <div class="dot"></div>
+            <span>WebdriverIO Reporter</span>
+        </div>
+        <h1>WDIO <span>Reporter</span> Setup</h1>
+        <div class="subtitle" data-i18n="subtitle">Створіть свій власний репортер за 4 кроки</div>
+    </div>
+
+    <div class="wizard-container">
+        <div class="progress-bar">
+            <div class="progress-step active" data-step="1">
+                <div class="step-circle"><span class="step-circle-num">1</span></div>
+                <div class="step-label" data-i18n="step1">Основне</div>
+            </div>
+            <div class="progress-step" data-step="2">
+                <div class="step-circle"><span class="step-circle-num">2</span></div>
+                <div class="step-label" data-i18n="step2">Дизайн</div>
+            </div>
+            <div class="progress-step" data-step="3">
+                <div class="step-circle"><span class="step-circle-num">3</span></div>
+                <div class="step-label" data-i18n="step3">Налаштування</div>
+            </div>
+            <div class="progress-step" data-step="4">
+                <div class="step-circle"><span class="step-circle-num">4</span></div>
+                <div class="step-label" data-i18n="step4">Завершення</div>
+            </div>
+        </div>
+
+        <div class="step-content">
+
+            <!-- STEP 1 -->
+            <div class="step active" data-step="1">
+                <h2 class="step-title">🏢 <span data-i18n="basic_info">Основна інформація</span></h2>
+                <p class="step-description" data-i18n="basic_desc">Розкажіть нам про ваш проект</p>
+
+                <div class="form-group">
+                    <label for="companyName" data-i18n="company_name">Назва компанії</label>
+                    <input type="text" id="companyName" placeholder="Наприклад: Acme Corp" value="Моя Компанія">
+                </div>
+                <div class="form-group">
+                    <label for="projectName" data-i18n="project_name">Назва проекту</label>
+                    <input type="text" id="projectName" placeholder="Наприклад: E2E Test Suite" value="Test Suite">
+                </div>
+                <div class="form-group">
+                    <label for="reportTitle" data-i18n="report_title">Заголовок звіту</label>
+                    <input type="text" id="reportTitle" placeholder="Наприклад: Test Execution Report" value="WDIO Test Report">
+                </div>
+                <div class="form-group">
+                    <label for="outputDir" data-i18n="output_dir">Папка для звітів</label>
+                    <input type="text" id="outputDir" placeholder="Наприклад: reports/my-report" value="reports/wdio-report">
+                </div>
+
+                <div class="form-group">
+                    <label for="wdioVersion" data-i18n="wdio_version">WebdriverIO версія <span class="wdio-tag">WDIO</span></label>
+                    <select id="wdioVersion">
+                        <option value="9">v9 (latest)</option>
+                        <option value="8" selected>v8</option>
+                        <option value="7">v7</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="step" data-step="2">
+                <h2 class="step-title">🎨 <span data-i18n="design_branding">Дизайн та брендинг</span></h2>
+                <p class="step-description" data-i18n="design_desc">Налаштуйте зовнішній вигляд вашого репортера</p>
+
+                <div class="form-group">
+                    <label data-i18n="theme_label">Тема оформлення</label>
+                    <div class="theme-selector">
+                        <div class="theme-card selected" data-theme="light">
+                            <div class="theme-icon">☀️</div>
+                            <div class="theme-name" data-i18n="theme_light">Світла</div>
+                        </div>
+                        <div class="theme-card" data-theme="dark">
+                            <div class="theme-icon">🌙</div>
+                            <div class="theme-name" data-i18n="theme_dark">Темна</div>
+                        </div>
+                        <div class="theme-card" data-theme="auto">
+                            <div class="theme-icon">🌓</div>
+                            <div class="theme-name" data-i18n="theme_auto">Авто</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="primaryColor" data-i18n="primary_color">Основний колір</label>
+                    <div class="color-input-group">
+                        <input type="color" id="primaryColor" value="#0ea5e9">
+                        <div class="color-preview" id="colorPreview">#0ea5e9</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="company_logo">Лого компанії</label>
+                    <div class="logo-upload-area">
+                        <input type="file" id="logoUpload" accept="image/*" style="display:none;" onchange="handleLogoUpload(event)">
+                        <button class="btn-secondary" onclick="document.getElementById('logoUpload').click()" style="flex:1;">
+                            <span data-i18n="upload_logo">📤 Завантажити лого</span>
+                        </button>
+                        <button class="btn-secondary" onclick="clearLogo()" id="clearLogoBtn" style="display:none;">
+                            <span data-i18n="clear_logo">🗑️ Очистити</span>
+                        </button>
+                    </div>
+                    <div id="logoPreviewContainer">
+                        <img id="logoImage" alt="Logo preview">
+                        <div id="logoName"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="step" data-step="3">
+                <h2 class="step-title">⚙️ <span data-i18n="settings">Налаштування</span></h2>
+                <p class="step-description" data-i18n="settings_desc">Оберіть, що включати в звіт</p>
+
+                <div class="form-group">
+                    <label data-i18n="what_show">Що показувати в звіті?</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="showPassed" checked>
+                            <label for="showPassed" data-i18n="passed_tests">✅ Пройдені тести</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="showSkipped" checked>
+                            <label for="showSkipped" data-i18n="skipped_tests">⏭️ Пропущені тести</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="showEnvInfo" checked>
+                            <label for="showEnvInfo" data-i18n="env_info">💻 Інфо про систему</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="what_include">Що включати в звіт? <span class="wdio-tag">WDIO</span></label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="includeScreenshots" checked>
+                            <label for="includeScreenshots" data-i18n="screenshots">📸 Скріншоти</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="includeVideos">
+                            <label for="includeVideos" data-i18n="videos">🎥 Відео</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="includeLogs" checked>
+                            <label for="includeLogs">📋 Browser Logs</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="includeTimings" checked>
+                            <label for="includeTimings">⏱️ Test Timings</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="reporter_type">Тип репортера <span class="wdio-tag">WDIO</span></label>
+                    <select id="reporterType">
+                        <option value="html" selected>HTML Reporter</option>
+                        <option value="allure">Allure Reporter</option>
+                        <option value="spec">Spec Reporter</option>
+                        <option value="junit">JUnit Reporter</option>
+                        <option value="custom">Custom HTML Reporter</option>
+                    </select>
+                </div>
+
+                <div class="preview-section">
+                    <div class="preview-title" data-i18n="config_preview">👁️ Config Preview</div>
+                    <div class="config-preview" id="configPreview"></div>
+                </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="step" data-step="4">
+                <div class="final-step">
+                    <span class="success-icon">🚀</span>
+                    <h2 class="step-title" data-i18n="ready">Готово!</h2>
+                    <p class="step-description" data-i18n="ready_desc">Ваш WebdriverIO репортер налаштовано. Завантажте файли конфігурації</p>
+
+                    <div class="download-section">
+                        <div class="download-card" onclick="downloadReporter()">
+                            <div class="download-icon">📦</div>
+                            <div class="download-title">custom-reporter.ts</div>
+                            <div class="download-desc" data-i18n="reporter_file">Основний файл репортера</div>
+                        </div>
+                        <div class="download-card" onclick="downloadConfig()">
+                            <div class="download-icon">⚙️</div>
+                            <div class="download-title">wdio.conf.ts</div>
+                            <div class="download-desc" data-i18n="config_file">Файл конфігурації WDIO</div>
+                        </div>
+                        <div class="download-card" onclick="copyToClipboard()">
+                            <div class="download-icon">📋</div>
+                            <div class="download-title" data-i18n="copy_config">Копіювати конфіг</div>
+                            <div class="download-desc" data-i18n="to_clipboard">У буфер обміну</div>
+                        </div>
+                    </div>
+
+                    <div class="preview-section">
+                        <div class="preview-title" data-i18n="install_guide">📝 Інструкція з встановлення</div>
+                        <div class="config-preview" id="installInstructions"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-secondary" id="prevBtn" onclick="previousStep()" style="display:none;">
+                    <span data-i18n="btn_back">← Назад</span>
+                </button>
+                <button class="btn-primary" id="nextBtn" onclick="nextStep()">
+                    <span id="nextBtnText" data-i18n="btn_next">Далі →</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="copy-notification" id="notification"></div>
+
+<script>
+    const translations = {
+        uk: {
+            subtitle: 'Створіть свій власний репортер за 4 кроки',
+            step1: 'Основне', step2: 'Дизайн', step3: 'Налаштування', step4: 'Завершення',
+            basic_info: 'Основна інформація', basic_desc: 'Розкажіть нам про ваш проект',
+            company_name: 'Назва компанії', project_name: 'Назва проекту',
+            report_title: 'Заголовок звіту', output_dir: 'Папка для звітів',
+            wdio_version: 'WebdriverIO версія',
+            design_branding: 'Дизайн та брендинг', design_desc: 'Налаштуйте зовнішній вигляд вашого репортера',
+            theme_label: 'Тема оформлення', theme_light: 'Світла', theme_dark: 'Темна', theme_auto: 'Авто',
+            primary_color: 'Основний колір', company_logo: 'Лого компанії',
+            upload_logo: '📤 Завантажити лого', clear_logo: '🗑️ Очистити',
+            settings: 'Налаштування', settings_desc: 'Оберіть, що включати в звіт',
+            what_show: 'Що показувати в звіті?', passed_tests: '✅ Пройдені тести',
+            skipped_tests: '⏭️ Пропущені тести', env_info: '💻 Інфо про систему',
+            what_include: 'Що включати в звіт?', screenshots: '📸 Скріншоти', videos: '🎥 Відео',
+            reporter_type: 'Тип репортера',
+            config_preview: '👁️ Попередній перегляд конфігурації',
+            ready: 'Готово!', ready_desc: 'Ваш WebdriverIO репортер налаштовано. Завантажте файли конфігурації',
+            reporter_file: 'Основний файл репортера', config_file: 'Файл конфігурації WDIO',
+            copy_config: 'Копіювати конфіг', to_clipboard: 'У буфер обміну',
+            install_guide: '📝 Інструкція з встановлення',
+            btn_back: '← Назад', btn_next: 'Далі →', btn_finish: 'Завершити 🚀',
+            copied: '✅ Скопійовано!', downloaded: '✅ Файл завантажено!',
+            setup_complete: '🚀 Конфігурацію завершено!',
+        },
+        en: {
+            subtitle: 'Create your own reporter in 4 steps',
+            step1: 'Basic', step2: 'Design', step3: 'Settings', step4: 'Finish',
+            basic_info: 'Basic Information', basic_desc: 'Tell us about your project',
+            company_name: 'Company Name', project_name: 'Project Name',
+            report_title: 'Report Title', output_dir: 'Output Directory',
+            wdio_version: 'WebdriverIO Version',
+            design_branding: 'Design & Branding', design_desc: 'Customize the look of your reporter',
+            theme_label: 'Theme', theme_light: 'Light', theme_dark: 'Dark', theme_auto: 'Auto',
+            primary_color: 'Primary Color', company_logo: 'Company Logo',
+            upload_logo: '📤 Upload Logo', clear_logo: '🗑️ Clear',
+            settings: 'Settings', settings_desc: 'Choose what to include in the report',
+            what_show: 'What to show in report?', passed_tests: '✅ Passed Tests',
+            skipped_tests: '⏭️ Skipped Tests', env_info: '💻 System Info',
+            what_include: 'What to include in report?', screenshots: '📸 Screenshots', videos: '🎥 Videos',
+            reporter_type: 'Reporter Type',
+            config_preview: '👁️ Configuration Preview',
+            ready: 'Ready!', ready_desc: 'Your WebdriverIO reporter is configured. Download the config files',
+            reporter_file: 'Main reporter file', config_file: 'WDIO config file',
+            copy_config: 'Copy Config', to_clipboard: 'To clipboard',
+            install_guide: '📝 Installation Guide',
+            btn_back: '← Back', btn_next: 'Next →', btn_finish: 'Finish 🚀',
+            copied: '✅ Copied!', downloaded: '✅ File downloaded!',
+            setup_complete: '🚀 Setup complete!',
+        },
+        pl: {
+            subtitle: 'Utwórz własny reporter w 4 krokach',
+            step1: 'Podstawy', step2: 'Design', step3: 'Ustawienia', step4: 'Zakończenie',
+            basic_info: 'Podstawowe informacje', basic_desc: 'Powiedz nam o swoim projekcie',
+            company_name: 'Nazwa firmy', project_name: 'Nazwa projektu',
+            report_title: 'Tytuł raportu', output_dir: 'Katalog raportów',
+            wdio_version: 'Wersja WebdriverIO',
+            design_branding: 'Design i branding', design_desc: 'Dostosuj wygląd swojego reportera',
+            theme_label: 'Motyw', theme_light: 'Jasny', theme_dark: 'Ciemny', theme_auto: 'Auto',
+            primary_color: 'Kolor główny', company_logo: 'Logo firmy',
+            upload_logo: '📤 Prześlij logo', clear_logo: '🗑️ Wyczyść',
+            settings: 'Ustawienia', settings_desc: 'Wybierz, co uwzględnić w raporcie',
+            what_show: 'Co pokazać w raporcie?', passed_tests: '✅ Zaliczone testy',
+            skipped_tests: '⏭️ Pominięte testy', env_info: '💻 Info systemowe',
+            what_include: 'Co dołączyć do raportu?', screenshots: '📸 Zrzuty ekranu', videos: '🎥 Wideo',
+            reporter_type: 'Typ reportera',
+            config_preview: '👁️ Podgląd konfiguracji',
+            ready: 'Gotowe!', ready_desc: 'Twój reporter WebdriverIO jest skonfigurowany. Pobierz pliki',
+            reporter_file: 'Główny plik reportera', config_file: 'Plik konfiguracyjny WDIO',
+            copy_config: 'Kopiuj konfigurację', to_clipboard: 'Do schowka',
+            install_guide: '📝 Instrukcja instalacji',
+            btn_back: '← Wstecz', btn_next: 'Dalej →', btn_finish: 'Zakończ 🚀',
+            copied: '✅ Skopiowano!', downloaded: '✅ Plik pobrany!',
+            setup_complete: '🚀 Konfiguracja zakończona!',
+        }
+    };
+
+    let currentLanguage = 'uk';
+    let logoData = null;
+    let logoFileName = '';
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    function setLanguage(lang) {
+        currentLanguage = lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang][key]) el.textContent = translations[lang][key];
+        });
+        updateNextBtnText();
+    }
+
+    function handleLogoUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        logoFileName = file.name;
+        const reader = new FileReader();
+        reader.onload = e => {
+            logoData = e.target.result;
+            document.getElementById('logoPreviewContainer').style.display = 'block';
+            document.getElementById('logoImage').src = logoData;
+            document.getElementById('logoName').textContent = logoFileName;
+            document.getElementById('clearLogoBtn').style.display = 'block';
+            showNotification('✅ Logo uploaded!');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function clearLogo() {
+        logoData = null; logoFileName = '';
+        document.getElementById('logoPreviewContainer').style.display = 'none';
+        document.getElementById('logoUpload').value = '';
+        document.getElementById('clearLogoBtn').style.display = 'none';
+        showNotification('🗑️ Logo cleared');
+    }
+
+    // Theme
+    document.querySelectorAll('.theme-card').forEach(card => {
+        card.addEventListener('click', function() {
+            document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+        });
+    });
+
+    // Color picker
+    document.getElementById('primaryColor').addEventListener('input', function(e) {
+        document.getElementById('colorPreview').textContent = e.target.value;
+        document.getElementById('colorPreview').style.background = e.target.value;
+        document.getElementById('colorPreview').style.color = 'white';
+        document.getElementById('colorPreview').style.borderColor = e.target.value;
+    });
+
+    function getConfig() {
+        return {
+            outputDir: document.getElementById('outputDir').value,
+            reportTitle: document.getElementById('reportTitle').value,
+            companyName: document.getElementById('companyName').value,
+            projectName: document.getElementById('projectName').value,
+            wdioVersion: document.getElementById('wdioVersion').value,
+            theme: document.querySelector('.theme-card.selected')?.dataset.theme || 'light',
+            primaryColor: document.getElementById('primaryColor').value,
+            reporterType: document.getElementById('reporterType').value,
+            showPassedTests: document.getElementById('showPassed').checked,
+            showSkippedTests: document.getElementById('showSkipped').checked,
+            showEnvironmentInfo: document.getElementById('showEnvInfo').checked,
+            includeScreenshots: document.getElementById('includeScreenshots').checked,
+            includeVideos: document.getElementById('includeVideos').checked,
+            includeLogs: document.getElementById('includeLogs').checked,
+            includeTimings: document.getElementById('includeTimings').checked,
+            logo: logoData,
+            logoFileName: logoFileName,
+            language: currentLanguage,
+        };
+    }
+
+    function updateProgress() {
+        document.querySelectorAll('.progress-step').forEach((step, i) => {
+            const n = i + 1;
+            step.classList.remove('active', 'completed');
+            if (n < currentStep) step.classList.add('completed');
+            else if (n === currentStep) step.classList.add('active');
+        });
+        document.getElementById('prevBtn').style.display = currentStep === 1 ? 'none' : 'block';
+        updateNextBtnText();
+        if (currentStep === 3) updateConfigPreview();
+        if (currentStep === 4) updateInstallInstructions();
+    }
+
+    function updateNextBtnText() {
+        const t = translations[currentLanguage];
+        document.getElementById('nextBtnText').textContent = currentStep === totalSteps ? t.btn_finish : t.btn_next;
+    }
+
+    function nextStep() {
+        if (currentStep === totalSteps) {
+            showNotification(translations[currentLanguage].setup_complete);
+            return;
+        }
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep++;
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function previousStep() {
+        if (currentStep === 1) return;
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep--;
+        document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+        updateProgress();
+    }
+
+    function updateConfigPreview() {
+        const c = getConfig();
+        let logoLine = c.logo
+            ? `  <span class="config-key">logo:</span> <span class="config-string">'${c.logo.substring(0, 40)}...'</span>,`
+            : `  <span class="config-comment">// logo: './assets/logo.png',</span>`;
+
+        document.getElementById('configPreview').innerHTML =
+`<span class="config-key">export const</span> reporterConfig = {
+  <span class="config-key">outputDir:</span>         <span class="config-string">'${c.outputDir}'</span>,
+  <span class="config-key">reportTitle:</span>       <span class="config-string">'${c.reportTitle}'</span>,
+  <span class="config-key">companyName:</span>       <span class="config-string">'${c.companyName}'</span>,
+  <span class="config-key">projectName:</span>       <span class="config-string">'${c.projectName}'</span>,
+  <span class="config-key">theme:</span>             <span class="config-string">'${c.theme}'</span>,
+  <span class="config-key">primaryColor:</span>      <span class="config-string">'${c.primaryColor}'</span>,
+  <span class="config-key">language:</span>          <span class="config-string">'${c.language}'</span>,
+  <span class="config-key">reporterType:</span>      <span class="config-string">'${c.reporterType}'</span>,
+${logoLine}
+  <span class="config-key">showPassedTests:</span>   ${c.showPassedTests},
+  <span class="config-key">showSkippedTests:</span>  ${c.showSkippedTests},
+  <span class="config-key">showEnvironmentInfo:</span>${c.showEnvironmentInfo},
+  <span class="config-key">includeScreenshots:</span>${c.includeScreenshots},
+  <span class="config-key">includeVideos:</span>     ${c.includeVideos},
+  <span class="config-key">includeLogs:</span>       ${c.includeLogs},
+  <span class="config-key">includeTimings:</span>    ${c.includeTimings},
+};`;
+    }
+
+    function updateInstallInstructions() {
+        const c = getConfig();
+        const labels = {
+            uk: { s1: 'Встановіть залежності', s2: 'Збережіть файли в корені проекту', s3: 'Запустіть тести', s4: 'Відкрийте звіт', s5: 'Готово!' },
+            en: { s1: 'Install dependencies', s2: 'Save files in project root', s3: 'Run tests', s4: 'Open report', s5: 'Done!' },
+            pl: { s1: 'Zainstaluj zależności', s2: 'Zapisz pliki w katalogu głównym', s3: 'Uruchom testy', s4: 'Otwórz raport', s5: 'Gotowe!' },
+        }[currentLanguage];
+
+        const reporterPkg = c.reporterType === 'allure'
+            ? '@wdio/allure-reporter allure-commandline'
+            : c.reporterType === 'junit'
+            ? '@wdio/junit-reporter'
+            : c.reporterType === 'spec'
+            ? '@wdio/spec-reporter'
+            : '@rpii/wdio-html-reporter';
+
+        document.getElementById('installInstructions').innerHTML =
+`<span class="config-key"># 1. ${labels.s1}</span>
+npm install --save-dev @wdio/cli @wdio/local-runner @wdio/mocha-framework
+npm install --save-dev ${reporterPkg}
+
+<span class="config-key"># 2. ${labels.s2}</span>
+- custom-reporter.ts
+- wdio.conf.ts
+
+<span class="config-key"># 3. ${labels.s3}</span>
+npx wdio run wdio.conf.ts
+
+<span class="config-key"># 4. ${labels.s4}</span>
+open <span class="config-string">${c.outputDir}</span>/index.html
+
+<span class="config-key"># ${labels.s5} 🚀</span>`;
+    }
+
+    function generateWdioConfig() {
+        const c = getConfig();
+        let logoCode = c.logo
+            ? `  logo: '${c.logo}',`
+            : `  // logo: './assets/logo.png', // path or base64 data URL`;
+
+        const reporterSetup = buildReporterConfig(c);
+
+        return `import type { Options } from '@wdio/types';
+import type { ReporterConfig } from './custom-reporter';
+
+const reporterConfig: ReporterConfig = {
+  outputDir: '${c.outputDir}',
+  reportTitle: '${c.reportTitle}',
+  companyName: '${c.companyName}',
+  projectName: '${c.projectName}',
+  theme: '${c.theme}',
+  primaryColor: '${c.primaryColor}',
+  language: '${c.language}',
+  reporterType: '${c.reporterType}',
+${logoCode}
+  showPassedTests: ${c.showPassedTests},
+  showSkippedTests: ${c.showSkippedTests},
+  showEnvironmentInfo: ${c.showEnvironmentInfo},
+  includeScreenshots: ${c.includeScreenshots},
+  includeVideos: ${c.includeVideos},
+  includeLogs: ${c.includeLogs},
+  includeTimings: ${c.includeTimings},
+};
+
+export const config: Options.Testrunner = {
+  runner: 'local',
+  autoCompileOpts: {
+    autoCompile: true,
+    tsNodeOpts: {
+      project: './tsconfig.json',
+      transpileOnly: true,
+    },
+  },
+
+  specs: ['./tests/**/*.spec.ts'],
+  exclude: [],
+
+  maxInstances: 5,
+
+  capabilities: [{
+    maxInstances: 5,
+    browserName: 'chrome',
+    acceptInsecureCerts: true,
+  }],
+
+  logLevel: 'info',
+  bail: 0,
+  baseUrl: 'http://localhost',
+  waitforTimeout: 10000,
+  connectionRetryTimeout: 120000,
+  connectionRetryCount: 3,
+
+  framework: 'mocha',
+  mochaOpts: {
+    ui: 'bdd',
+    timeout: 60000,
+  },
+
+  reporters: [
+    'spec',
+${reporterSetup}
+  ],
+
+  ${c.includeScreenshots ? `afterTest: async function(test, context, { error, result, duration, passed }) {
+    if (!passed) {
+      await browser.saveScreenshot(\`${c.outputDir}/screenshots/\${test.title.replace(/\\s/g, '_')}.png\`);
+    }
+  },` : '// afterTest: async function() { /* add custom logic */ },'}
+};`;
+    }
+
+    function buildReporterConfig(c) {
+        switch (c.reporterType) {
+            case 'allure':
+                return `    ['allure', {
+      outputDir: '${c.outputDir}/allure-results',
+      disableWebdriverStepsReporting: false,
+      disableWebdriverScreenshotsReporting: ${!c.includeScreenshots},
+    }]`;
+            case 'junit':
+                return `    ['junit', {
+      outputDir: '${c.outputDir}',
+      outputFileFormat: (options) => \`results-\${options.cid}.xml\`,
+    }]`;
+            case 'spec':
+                return `    ['spec', {
+      addConsoleLogs: ${c.includeLogs},
+      realtimeReporting: true,
+      color: true,
+    }]`;
+            case 'html':
+                return `    ['@rpii/wdio-html-reporter', {
+      outputDir: '${c.outputDir}',
+      filename: 'report.html',
+      reportTitle: '${c.reportTitle}',
+      showInBrowser: true,
+      collapseTests: false,
+      logLevel: 'info',
+    }]`;
+            default: // custom
+                return `    ['./custom-reporter.ts', reporterConfig]`;
+        }
+    }
+
+    function generateCustomReporter() {
+        return `import WDIOReporter, { SuiteStats, TestStats, RunnerStats } from '@wdio/reporter';
+import * as fs from 'fs';
+import * as path from 'path';
+
+export interface ReporterConfig {
+  outputDir: string;
+  reportTitle: string;
+  companyName: string;
+  projectName: string;
+  theme: 'light' | 'dark' | 'auto';
+  primaryColor: string;
+  language: string;
+  reporterType: string;
+  logo?: string;
+  showPassedTests: boolean;
+  showSkippedTests: boolean;
+  showEnvironmentInfo: boolean;
+  includeScreenshots: boolean;
+  includeVideos: boolean;
+  includeLogs: boolean;
+  includeTimings: boolean;
+}
+
+interface TestResult {
+  title: string;
+  fullTitle: string;
+  state: 'passed' | 'failed' | 'skipped';
+  duration: number;
+  error?: string;
+  screenshot?: string;
+}
+
+export default class CustomHTMLReporter extends WDIOReporter {
+  private config: ReporterConfig;
+  private results: TestResult[] = [];
+  private startTime: number = Date.now();
+
+  constructor(options: ReporterConfig) {
+    super(options);
+    this.config = options;
+  }
+
+  onTestPass(test: TestStats) {
+    if (!this.config.showPassedTests) return;
+    this.results.push({
+      title: test.title,
+      fullTitle: test.fullTitle,
+      state: 'passed',
+      duration: test.duration ?? 0,
+    });
+  }
+
+  onTestFail(test: TestStats) {
+    this.results.push({
+      title: test.title,
+      fullTitle: test.fullTitle,
+      state: 'failed',
+      duration: test.duration ?? 0,
+      error: test.errors?.[0]?.message ?? 'Unknown error',
+    });
+  }
+
+  onTestSkip(test: TestStats) {
+    if (!this.config.showSkippedTests) return;
+    this.results.push({
+      title: test.title,
+      fullTitle: test.fullTitle,
+      state: 'skipped',
+      duration: 0,
+    });
+  }
+
+  onRunnerEnd(runner: RunnerStats) {
+    this.generateReport();
+  }
+
+  private generateReport() {
+    const passed = this.results.filter(r => r.state === 'passed').length;
+    const failed = this.results.filter(r => r.state === 'failed').length;
+    const skipped = this.results.filter(r => r.state === 'skipped').length;
+    const total = this.results.length;
+    const duration = ((Date.now() - this.startTime) / 1000).toFixed(1);
+
+    const outputDir = this.config.outputDir;
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    const html = this.buildHTML({ passed, failed, skipped, total, duration });
+    fs.writeFileSync(path.join(outputDir, 'index.html'), html, 'utf8');
+    console.log(\`\\n📊 HTML Report generated: \${path.join(outputDir, 'index.html')}\\n\`);
+  }
+
+  private buildHTML(stats: { passed: number; failed: number; skipped: number; total: number; duration: string }) {
+    const isDark = this.config.theme === 'dark' ||
+      (this.config.theme === 'auto' && false); // simplified
+    const bg = isDark ? '#0f172a' : '#f8fafc';
+    const surface = isDark ? '#1e293b' : '#ffffff';
+    const textColor = isDark ? '#f1f5f9' : '#1e293b';
+    const primary = this.config.primaryColor;
+
+    const testRows = this.results.map(t => {
+      const icon = t.state === 'passed' ? '✅' : t.state === 'failed' ? '❌' : '⏭️';
+      const color = t.state === 'passed' ? '#22c55e' : t.state === 'failed' ? '#ef4444' : '#f59e0b';
+      return \`<tr>
+        <td>\${icon} \${t.title}</td>
+        <td style="color:\${color};font-weight:700">\${t.state.toUpperCase()}</td>
+        <td>\${t.duration}ms</td>
+        <td style="color:#ef4444;font-size:12px">\${t.error || '-'}</td>
+      </tr>\`;
+    }).join('');
+
+    const logoHTML = this.config.logo
+      ? \`<img src="\${this.config.logo}" alt="Logo" style="height:40px;margin-right:16px;">\`
+      : '';
+
+    return \`<!DOCTYPE html>
+<html lang="\${this.config.language}">
+<head>
+  <meta charset="UTF-8">
+  <title>\${this.config.reportTitle}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: \${bg}; color: \${textColor}; margin: 0; padding: 32px; }
+    .header { display: flex; align-items: center; margin-bottom: 32px; }
+    h1 { font-size: 28px; font-weight: 800; }
+    .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 32px; }
+    .stat { background: \${surface}; border-radius: 12px; padding: 20px; text-align: center; border: 1px solid rgba(0,0,0,0.08); }
+    .stat-num { font-size: 36px; font-weight: 800; }
+    .stat-label { font-size: 13px; opacity: 0.6; margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; background: \${surface}; border-radius: 12px; overflow: hidden; }
+    th { background: \${primary}; color: white; padding: 14px 16px; text-align: left; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
+    td { padding: 13px 16px; border-bottom: 1px solid rgba(0,0,0,0.06); font-size: 14px; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(0,0,0,0.02); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    \${logoHTML}
+    <div>
+      <h1>\${this.config.reportTitle}</h1>
+      <div style="opacity:0.6;font-size:14px">\${this.config.companyName} · \${this.config.projectName} · \${new Date().toLocaleString()}</div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-num" style="color:#6b7280">\${stats.total}</div><div class="stat-label">Total</div></div>
+    <div class="stat"><div class="stat-num" style="color:#22c55e">\${stats.passed}</div><div class="stat-label">Passed</div></div>
+    <div class="stat"><div class="stat-num" style="color:#ef4444">\${stats.failed}</div><div class="stat-label">Failed</div></div>
+    <div class="stat"><div class="stat-num" style="color:#f59e0b">\${stats.skipped}</div><div class="stat-label">Skipped</div></div>
+  </div>
+  <table>
+    <thead><tr><th>Test</th><th>Status</th><th>Duration</th><th>Error</th></tr></thead>
+    <tbody>\${testRows}</tbody>
+  </table>
+  <div style="margin-top:24px;opacity:0.5;font-size:13px">Generated in \${stats.duration}s · WebdriverIO Custom Reporter</div>
+</body>
+</html>\`;
+  }
+}`;
+    }
+
+    function downloadConfig() {
+        downloadFile('wdio.conf.ts', generateWdioConfig());
+        showNotification(translations[currentLanguage].downloaded);
+    }
+
+    function downloadReporter() {
+        downloadFile('custom-reporter.ts', generateCustomReporter());
+        showNotification(translations[currentLanguage].downloaded);
+    }
+
+    function copyToClipboard() {
+        navigator.clipboard.writeText(generateWdioConfig()).then(() => {
+            showNotification(translations[currentLanguage].copied);
+        });
+    }
+
+    function downloadFile(filename, content) {
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename; a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function showNotification(msg) {
+        const el = document.getElementById('notification');
+        el.textContent = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    // Init
+    updateProgress();
+</script>
+</body>
+</html>
