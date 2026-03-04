@@ -28,7 +28,7 @@ describe('General Store', () => {
   //   await expect(nameTitle).toHaveText('General Store')
   // })
 
-    it.only('Title_text_test', async () => {
+    it('Title_text_test', async () => {
     await mainPage.waitForPage
     await mainPage.CheckTitleText(TD.TitleGeneralStore)
   })
@@ -95,15 +95,16 @@ describe('General Store', () => {
   //   await expect(MainScreenRadioButtonMale_IsChecked).toEqual('false');
   // })
 
+    it('MainScreenRadioButtonFemale', async () => {
+    await mainPage.selectGender("female")
+    await mainPage.isFemaleChecked
+  })
+  
     it('MainScreenRadioButtonMale', async () => {
     await mainPage.selectGender("male")
     await mainPage.isMaleChecked
   })
 
-    it('MainScreenRadioButtonFemale', async () => {
-    await mainPage.selectGender("female")
-    await mainPage.isFemaleChecked
-  })
 
   // it('MainScreenInputField', async () => {
   //   const MainScreenInputField = await $('android=new UiSelector().resourceId("com.androidsample.generalstore:id/nameField")')
