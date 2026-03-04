@@ -1,5 +1,5 @@
 import type { Options } from '@wdio/types';
-import type { ReporterConfig } from './custom-reporter';
+import { ReporterConfig } from './custom-reporter';
 
 const reporterConfig: ReporterConfig = {
   outputDir: 'reports/wdio-report',
