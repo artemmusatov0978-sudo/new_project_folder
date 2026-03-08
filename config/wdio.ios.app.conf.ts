@@ -11,7 +11,7 @@ export const config: WebdriverIO.Config = {
     // ============
     specs: [
         // '../tests/specs/**/app*.spec.ts'],
-        '../tests/specs/kredo/**/kredo.ios.**.spec.ts'
+        '../src/tests/General-Store.ios.spec.ts'
     ],
     // ============
     // Capabilities
@@ -39,7 +39,7 @@ export const config: WebdriverIO.Config = {
             "appium:wdaLocalPort": 8100,
             'appium:udid': 'CBC12F44-ADD4-448F-AA1C-78E20D85EDB1', //CBC12F44-ADD4-448F-AA1C-78E20D85EDB1
             // The path to the app maxTypingFrequency
-            'appium:app': join(process.cwd(), './apps/iBankKredo-Test.app.zip'),
+            'appium:app': join(process.cwd(), './app/TheApp.app'),
             // Read the reset strategies very well, they differ per platform, see
             // http://appium.io/docs/en/writing-running-appium/other/reset-strategies/
             'appium:noReset': true,
