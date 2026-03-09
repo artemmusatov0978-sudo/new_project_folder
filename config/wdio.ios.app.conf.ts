@@ -11,7 +11,7 @@ export const config: WebdriverIO.Config = {
     // ============
     specs: [
         // '../tests/specs/**/app*.spec.ts'],
-        '../src/tests/General-Store.ios.spec.ts'
+        '../src/tests/**.ios.spec.ts'
     ],
     // ============
     // Capabilities
@@ -43,6 +43,7 @@ export const config: WebdriverIO.Config = {
             // Read the reset strategies very well, they differ per platform, see
             // http://appium.io/docs/en/writing-running-appium/other/reset-strategies/
             'appium:noReset': true,
+            //'appium:fullReset': true,
             'appium:newCommandTimeout': 240,
             // This is needed to wait for the webview context to become available
             'appium:autoAcceptAlerts': true
