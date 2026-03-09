@@ -25,11 +25,32 @@ export const config: Options.Testrunner = {
       },
     ],
   ],
-  reporters: ['spec'],
-  mochaOpts: {
-    ui: 'bdd',
-    timeout: 60000,
+ reporters: [
+    'spec',
+    ['./custom-reporter.ts', {
+      outputDir: 'reports/appium-report',
+      reportTitle: 'Android Test Report',
+      companyName: 'My Company',
+      projectName: 'Android E2E',
+      theme: 'light',
+      primaryColor: '#3ddc84',                 
+      language: 'uk',
+      showPassedTests: true,
+      showSkippedTests: true,
+      includeScreenshots: true,
+      showEnvironmentInfo: true,
+    }]
+  ],
+ 
+
+  afterTest: async function(test, ctx, { passed }) {
+    if (!passed) {
+      const dir = 'reports/appium-report/screenshots';
+      const name = test.title.replace(/\s/g, '_');
+      await driver.saveScreenshot(`${dir}/${name}.png`);
+    }
   },
+
   autoCompileOpts: {
     autoCompile: true,
     tsNodeOpts: {
