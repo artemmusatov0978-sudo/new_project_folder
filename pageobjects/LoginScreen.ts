@@ -1,13 +1,13 @@
 import GM from "../helpers/global.methods";
+ 
 class LoginScreen {
     loginScreenTitle: string;
-    EchoScreenImputField: Promise<WebdriverIO.Element>;
-
     constructor() {
         this.loginScreenTitle = '~Login Screen A fake login screen for testing';
-        this.EchoScreenImputField = $('XCUIElementTypeTextField');
     }
- 
+    get EchoScreenInputField() {
+        return $('XCUIElementTypeTextField');
+    }
     async waitForScreen() {
         try {
             console.log(' Waiting for Login Screen...');

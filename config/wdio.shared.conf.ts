@@ -1,4 +1,5 @@
 import type { Options } from '@wdio/types';
+import EnterpriseReporter from '../custom-reporter'; 
 export const config: Options.Testrunner = {
   runner: 'local',
   framework: 'mocha',
@@ -27,19 +28,16 @@ export const config: Options.Testrunner = {
   ],
  reporters: [
     'spec',
-    ['./custom-reporter.ts', {
+    [EnterpriseReporter, {
       outputDir: 'reports/appium-report',
       reportTitle: 'Android Test Report',
       companyName: 'My Company',
       projectName: 'Android E2E',
       theme: 'light',
-      primaryColor: '#3ddc84',                 
+      primaryColor: '#3ddc84',
       language: 'uk',
       showPassedTests: true,
-      showSkippedTests: true,
-      includeScreenshots: true,
-      showEnvironmentInfo: true,
-    }]
+    }],
   ],
  
 
