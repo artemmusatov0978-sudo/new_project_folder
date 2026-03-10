@@ -3,6 +3,10 @@ import { config as sharedConfig } from './wdio.shared.conf';
  
 export const config: WebdriverIO.Config = {
   ...sharedConfig,
+      specs: [
+        // '../tests/specs/**/app*.spec.ts'],
+        '../src/tests/**.android.spec.ts'
+    ],
   capabilities: [
     {
       platformName: 'Android',
@@ -10,7 +14,7 @@ export const config: WebdriverIO.Config = {
       'appium:deviceName': 'Pixel_4_11',
       'appium:platformVersion': '11',
       'appium:udid': 'emulator-5554',
-      'appium:app': './app/General-Store.apk',
+      'appium:app': './app/TheApp.apk',
       // 'appium:app': join(
       //           process.cwd(),
       //           'app',
