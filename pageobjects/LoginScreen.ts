@@ -3,7 +3,7 @@ import GM from "../helpers/global.methods";
 class LoginScreen {
     loginScreenTitle: string;
     constructor() {
-        this.loginScreenTitle = '~Login Screen A fake login screen for testing';
+        this.loginScreenTitle = '~Login Screen A fake login scree for testing';
     }
     get EchoScreenInputField() {
         return $('XCUIElementTypeTextField');
@@ -11,11 +11,7 @@ class LoginScreen {
     async waitForScreen() {
         try {
             console.log(' Waiting for Login Screen...');
-            const element = await $(this.loginScreenTitle);
-            await element.waitForDisplayed({
-                timeout: 10000,
-                timeoutMsg: ' Login Screen not visible'
-            });
+            await GM.waitForElement(this.loginScreenTitle);
             console.log('Login Screen is visible');
         } catch (error) {
             console.error('Error while waiting Login Screen');

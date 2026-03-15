@@ -32,7 +32,7 @@
         "android.sauce.rdc.app.eu": "REGION=eu wdio config/saucelabs/wdio.android.rdc.app.conf.ts",
         "android.sauce.rdc.app.us": "wdio run config/saucelabs/wdio.android.rdc.app.conf.ts",
         "android.testingbot.app": "wdio ./config/testingbot/wdio.android.tb.app.conf.ts",
-        "android.app": "wdio run config/wdio.android.app.conf.ts",
+        "android.app": "wdio run config/wdio.android.conf.ts",
         "android2.app": "wdio run config/wdio.android.app2.conf.ts",
         "android.app.cucumber": "wdio run config/wdio.android.app.cucumber.conf.ts",
         "android.browser": "wdio run config/wdio.android.browser.conf.ts",

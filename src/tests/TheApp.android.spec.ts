@@ -10,7 +10,7 @@ import LoginScreen from '../../pageobjects/LoginScreen';
 
 describe('Login Screen', () => {
  
-    it('Verify Login screen is displayed', async () => {
+    it('Verify Login screen is displayed - Android', async () => {
  
         await LoginScreen.waitForScreen();
  
